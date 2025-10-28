@@ -141,28 +141,14 @@ public class Order {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return orderNumber == order.orderNumber &&
-                Objects.equals(customerName, order.customerName) &&
-                Objects.equals(state, order.state) &&
-                Objects.equals(orderDate, order.orderDate) &&
-                Objects.equals(taxRate, order.taxRate) &&
-                Objects.equals(productType, order.productType) &&
-                Objects.equals(costPerSquareFoot, order.costPerSquareFoot) &&
-                Objects.equals(laborCostPerSquareFoot, order.laborCostPerSquareFoot) &&
-                Objects.equals(materialCost, order.materialCost) &&
-                Objects.equals(area, order.area) &&
-                Objects.equals(laborCost, order.laborCost) &&
-                Objects.equals(tax, order.tax) &&
-                Objects.equals(total, order.total);
+        return orderNumber == order.orderNumber && Objects.equals(customerName, order.customerName) && Objects.equals(state, order.state) && Objects.equals(orderDate, order.orderDate) && Objects.equals(taxRate, order.taxRate) && Objects.equals(productType, order.productType) && Objects.equals(costPerSquareFoot, order.costPerSquareFoot) && Objects.equals(laborCostPerSquareFoot, order.laborCostPerSquareFoot) && Objects.equals(materialCost, order.materialCost) && Objects.equals(area, order.area) && Objects.equals(laborCost, order.laborCost) && Objects.equals(tax, order.tax) && Objects.equals(total, order.total);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderNumber, customerName, state, orderDate, taxRate, productType,
-                costPerSquareFoot, laborCostPerSquareFoot, materialCost, area, laborCost, tax, total);
+        return Objects.hash(orderNumber, customerName, state, orderDate, taxRate, productType, costPerSquareFoot, laborCostPerSquareFoot, materialCost, area, laborCost, tax, total);
     }
 
     @Override
