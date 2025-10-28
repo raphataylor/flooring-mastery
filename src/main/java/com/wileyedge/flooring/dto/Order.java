@@ -1,4 +1,4 @@
-package com.wileyedge.flooring.model;
+package com.wileyedge.flooring.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,30 +11,23 @@ public class Order {
     private LocalDate orderDate;
     private BigDecimal taxRate;
     private String productType;
+    private BigDecimal area;
     private BigDecimal costPerSquareFoot;
     private BigDecimal laborCostPerSquareFoot;
     private BigDecimal materialCost;
-    private BigDecimal area;
     private BigDecimal laborCost;
     private BigDecimal tax;
     private BigDecimal total;
 
-    public Order(int orderNumber, String customerName, String state, LocalDate orderDate, BigDecimal taxRate, String productType, BigDecimal costPerSquareFoot, BigDecimal laborCostPerSquareFoot, BigDecimal materialCost, BigDecimal area, BigDecimal laborCost, BigDecimal tax, BigDecimal total) {
-        this.orderNumber = orderNumber;
-        this.customerName = customerName;
-        this.state = state;
-        this.orderDate = orderDate;
-        this.taxRate = taxRate;
-        this.productType = productType;
-        this.costPerSquareFoot = costPerSquareFoot;
-        this.laborCostPerSquareFoot = laborCostPerSquareFoot;
-        this.materialCost = materialCost;
-        this.area = area;
-        this.laborCost = laborCost;
-        this.tax = tax;
-        this.total = total;
+    // Constructors
+    public Order() {
     }
 
+    public Order(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    // Getters and Setters
     public int getOrderNumber() {
         return orderNumber;
     }
@@ -83,6 +76,14 @@ public class Order {
         this.productType = productType;
     }
 
+    public BigDecimal getArea() {
+        return area;
+    }
+
+    public void setArea(BigDecimal area) {
+        this.area = area;
+    }
+
     public BigDecimal getCostPerSquareFoot() {
         return costPerSquareFoot;
     }
@@ -105,14 +106,6 @@ public class Order {
 
     public void setMaterialCost(BigDecimal materialCost) {
         this.materialCost = materialCost;
-    }
-
-    public BigDecimal getArea() {
-        return area;
-    }
-
-    public void setArea(BigDecimal area) {
-        this.area = area;
     }
 
     public BigDecimal getLaborCost() {
@@ -141,14 +134,29 @@ public class Order {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return orderNumber == order.orderNumber && Objects.equals(customerName, order.customerName) && Objects.equals(state, order.state) && Objects.equals(orderDate, order.orderDate) && Objects.equals(taxRate, order.taxRate) && Objects.equals(productType, order.productType) && Objects.equals(costPerSquareFoot, order.costPerSquareFoot) && Objects.equals(laborCostPerSquareFoot, order.laborCostPerSquareFoot) && Objects.equals(materialCost, order.materialCost) && Objects.equals(area, order.area) && Objects.equals(laborCost, order.laborCost) && Objects.equals(tax, order.tax) && Objects.equals(total, order.total);
+        return orderNumber == order.orderNumber &&
+                Objects.equals(customerName, order.customerName) &&
+                Objects.equals(state, order.state) &&
+                Objects.equals(orderDate, order.orderDate) &&
+                Objects.equals(taxRate, order.taxRate) &&
+                Objects.equals(productType, order.productType) &&
+                Objects.equals(area, order.area) &&
+                Objects.equals(costPerSquareFoot, order.costPerSquareFoot) &&
+                Objects.equals(laborCostPerSquareFoot, order.laborCostPerSquareFoot) &&
+                Objects.equals(materialCost, order.materialCost) &&
+                Objects.equals(laborCost, order.laborCost) &&
+                Objects.equals(tax, order.tax) &&
+                Objects.equals(total, order.total);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderNumber, customerName, state, orderDate, taxRate, productType, costPerSquareFoot, laborCostPerSquareFoot, materialCost, area, laborCost, tax, total);
+        return Objects.hash(orderNumber, customerName, state, orderDate, taxRate,
+                productType, area, costPerSquareFoot, laborCostPerSquareFoot,
+                materialCost, laborCost, tax, total);
     }
 
     @Override
@@ -160,10 +168,10 @@ public class Order {
                 ", orderDate=" + orderDate +
                 ", taxRate=" + taxRate +
                 ", productType='" + productType + '\'' +
+                ", area=" + area +
                 ", costPerSquareFoot=" + costPerSquareFoot +
                 ", laborCostPerSquareFoot=" + laborCostPerSquareFoot +
                 ", materialCost=" + materialCost +
-                ", area=" + area +
                 ", laborCost=" + laborCost +
                 ", tax=" + tax +
                 ", total=" + total +

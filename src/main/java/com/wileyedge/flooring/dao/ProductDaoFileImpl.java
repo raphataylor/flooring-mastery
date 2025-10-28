@@ -1,49 +1,56 @@
 package com.wileyedge.flooring.dao;
 
+import com.wileyedge.flooring.dto.Product;
 import com.wileyedge.flooring.exceptions.PersistenceException;
-import com.wileyedge.flooring.model.Product;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
+@Component
 public class ProductDaoFileImpl implements ProductDao {
 
-    private static final String PRODUCT_FILE = "Data/Products.txt";
+    private final String PRODUCT_FILE;
     private static final String DELIMITER = ",";
+    private Map<String, Product> products = new HashMap<>();
 
-    private Map<String, Product> allProducts = new HashMap<>();
+    public ProductDaoFileImpl() {
+        this.PRODUCT_FILE = "Data/Products.txt";
+    }
 
-    @Override
-    public Map<String, Product> getAllProducts() throws PersistenceException {
-        loadFile();
-        return allProducts;
+    public ProductDaoFileImpl(String productFile) {
+        this.PRODUCT_FILE = productFile;
     }
 
     @Override
-    public List<Product> getProducts() throws PersistenceException {
-        loadFile();
-        return new ArrayList<>(allProducts.values());
+    public List<Product> getAllProducts() throws PersistenceException {
+        loadProducts();
+        return new ArrayList<>(products.values());
     }
 
-    private void loadFile() throws PersistenceException {
+    @Override
+    public Product getProduct(String productType) throws PersistenceException {
+        loadProducts();
+        return products.get(productType);
+    }
+
+    private void loadProducts() throws PersistenceException {
         Scanner scanner;
 
         try {
             scanner = new Scanner(new BufferedReader(new FileReader(PRODUCT_FILE)));
         } catch (FileNotFoundException e) {
-            throw new PersistenceException("Could not load product data into memory.", e);
+            throw new PersistenceException("Could not load product data.", e);
         }
 
+        products.clear();
         String currentLine;
         Product currentProduct;
 
+        // Skip header line
         if (scanner.hasNextLine()) {
             scanner.nextLine();
         }
@@ -51,7 +58,7 @@ public class ProductDaoFileImpl implements ProductDao {
         while (scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
             currentProduct = unmarshallProduct(currentLine);
-            allProducts.put(currentProduct.getProductType(), currentProduct);
+            products.put(currentProduct.getProductType(), currentProduct);
         }
 
         scanner.close();
@@ -61,14 +68,11 @@ public class ProductDaoFileImpl implements ProductDao {
         String[] productTokens = productAsText.split(DELIMITER);
 
         String productType = productTokens[0];
+        BigDecimal costPerSquareFoot = new BigDecimal(productTokens[1]);
+        BigDecimal laborCostPerSquareFoot = new BigDecimal(productTokens[2]);
 
-        Product productFromFile = new Product();
-        productFromFile.setProductType(productType);
-        productFromFile.setCostPerSquareFoot(new BigDecimal(productTokens[1]));
-        productFromFile.setLaborCostPerSquareFoot(new BigDecimal(productTokens[2]));
+        Product product = new Product(productType, costPerSquareFoot, laborCostPerSquareFoot);
 
-        return productFromFile;
+        return product;
     }
 }
-
-

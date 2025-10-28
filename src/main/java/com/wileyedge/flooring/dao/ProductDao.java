@@ -1,14 +1,24 @@
 package com.wileyedge.flooring.dao;
 
+import com.wileyedge.flooring.dto.Product;
 import com.wileyedge.flooring.exceptions.PersistenceException;
-import com.wileyedge.flooring.model.Product;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ProductDao {
 
-    Map<String, Product> getAllProducts() throws PersistenceException;
+    /**
+     * Gets all available products
+     * @return list of all products
+     * @throws PersistenceException if unable to read from persistence
+     */
+    List<Product> getAllProducts() throws PersistenceException;
 
-    List<Product> getProducts() throws PersistenceException;
+    /**
+     * Gets a product by its type
+     * @param productType the product type to find
+     * @return the product if found, null otherwise
+     * @throws PersistenceException if unable to read from persistence
+     */
+    Product getProduct(String productType) throws PersistenceException;
 }
