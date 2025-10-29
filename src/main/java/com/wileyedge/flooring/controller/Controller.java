@@ -10,8 +10,10 @@ import com.wileyedge.flooring.ui.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
 
 @Component
 public class Controller {
@@ -84,6 +86,24 @@ public class Controller {
         // Set order number
         order.setOrderNumber(service.getNextOrderNumber());
 
+        // Manually calculate order totals for preview
+        BigDecimal area = order.getArea();
+        BigDecimal costPerSqFt = order.getCostPerSquareFoot();
+        BigDecimal laborCostPerSqFt = order.getLaborCostPerSquareFoot();
+        BigDecimal taxRate = order.getTaxRate();
+
+        BigDecimal materialCost = area.multiply(costPerSqFt).setScale(2, java.math.RoundingMode.HALF_UP);
+        BigDecimal laborCost = area.multiply(laborCostPerSqFt).setScale(2, java.math.RoundingMode.HALF_UP);
+        BigDecimal tax = materialCost.add(laborCost)
+                .multiply(taxRate.divide(new BigDecimal("100"), 4, java.math.RoundingMode.HALF_UP))
+                .setScale(2, java.math.RoundingMode.HALF_UP);
+        BigDecimal total = materialCost.add(laborCost).add(tax).setScale(2, java.math.RoundingMode.HALF_UP);
+
+        order.setMaterialCost(materialCost);
+        order.setLaborCost(laborCost);
+        order.setTax(tax);
+        order.setTotal(total);
+
         // Show order summary and confirm
         view.displayOrderInfo(order);
 
@@ -113,6 +133,24 @@ public class Controller {
             List<Product> products = service.getAllProducts();
 
             Order editedOrder = view.getEditOrderInput(existingOrder, taxes, products);
+
+            // Manually calculate order totals for preview
+            BigDecimal area = editedOrder.getArea();
+            BigDecimal costPerSqFt = editedOrder.getCostPerSquareFoot();
+            BigDecimal laborCostPerSqFt = editedOrder.getLaborCostPerSquareFoot();
+            BigDecimal taxRate = editedOrder.getTaxRate();
+
+            BigDecimal materialCost = area.multiply(costPerSqFt).setScale(2, java.math.RoundingMode.HALF_UP);
+            BigDecimal laborCost = area.multiply(laborCostPerSqFt).setScale(2, java.math.RoundingMode.HALF_UP);
+            BigDecimal tax = materialCost.add(laborCost)
+                    .multiply(taxRate.divide(new BigDecimal("100"), 4, java.math.RoundingMode.HALF_UP))
+                    .setScale(2, java.math.RoundingMode.HALF_UP);
+            BigDecimal total = materialCost.add(laborCost).add(tax).setScale(2, java.math.RoundingMode.HALF_UP);
+
+            editedOrder.setMaterialCost(materialCost);
+            editedOrder.setLaborCost(laborCost);
+            editedOrder.setTax(tax);
+            editedOrder.setTotal(total);
 
             // Show updated order summary
             view.displayOrderInfo(editedOrder);

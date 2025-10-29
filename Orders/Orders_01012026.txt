@@ -1,2 +1,2 @@
 OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
-4,rapha taylor,WA,9.25,Laminate,1000.0,1.75,2.10,1750.00,2100.00,356.13,4206.13
+5,bob marley,CA,25.00,Tile,411.0,3.50,4.15,1438.50,1705.65,786.04,3930.19
