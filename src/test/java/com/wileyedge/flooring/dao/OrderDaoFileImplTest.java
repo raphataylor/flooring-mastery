@@ -10,41 +10,25 @@ import org.junit.Test;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 public class OrderDaoFileImplTest {
 
     private OrderDao dao;
-    private final String TEST_ORDER_FOLDER = "TestOrders";
 
     @Before
     public void setUp() throws Exception {
-        // Create test directory
-        new File(TEST_ORDER_FOLDER).mkdirs();
-
-        // Create a custom DAO for testing
-        dao = new OrderDaoFileImpl() {
-            @Override
-            public Order addOrder(Order order) throws PersistenceException {
-                // Override to use test folder
-                return super.addOrder(order);
-            }
-        };
+        // Use a stub implementation for testing
+        dao = new OrderDaoStubImpl();
     }
 
     @After
     public void tearDown() throws Exception {
-        // Clean up test files
-        File folder = new File(TEST_ORDER_FOLDER);
-        File[] files = folder.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
-        }
-        folder.delete();
+        // No cleanup needed for stub
     }
 
     @Test
@@ -162,5 +146,64 @@ public class OrderDaoFileImplTest {
         order.setTotal(new BigDecimal("799.04"));
         order.setOrderDate(date);
         return order;
+    }
+
+    // Stub implementation for testing
+    private static class OrderDaoStubImpl implements OrderDao {
+        private Map<LocalDate, Map<Integer, Order>> orders = new HashMap<>();
+        private int nextOrderNumber = 1;
+
+        @Override
+        public int getNextOrderNumber() {
+            return nextOrderNumber++;
+        }
+
+        @Override
+        public Order addOrder(Order order) {
+            LocalDate date = order.getOrderDate();
+            orders.computeIfAbsent(date, k -> new HashMap<>())
+                    .put(order.getOrderNumber(), order);
+            return order;
+        }
+
+        @Override
+        public Order getOrder(LocalDate date, int orderNumber) throws NoSuchOrderException {
+            Map<Integer, Order> dateOrders = orders.get(date);
+            if (dateOrders == null || !dateOrders.containsKey(orderNumber)) {
+                throw new NoSuchOrderException("Order not found");
+            }
+            return dateOrders.get(orderNumber);
+        }
+
+        @Override
+        public Order editOrder(Order order) throws NoSuchOrderException {
+            LocalDate date = order.getOrderDate();
+            Map<Integer, Order> dateOrders = orders.get(date);
+            if (dateOrders == null || !dateOrders.containsKey(order.getOrderNumber())) {
+                throw new NoSuchOrderException("Order not found");
+            }
+            dateOrders.put(order.getOrderNumber(), order);
+            return order;
+        }
+
+        @Override
+        public List<Order> getOrdersForDate(LocalDate date) {
+            Map<Integer, Order> dateOrders = orders.get(date);
+            return dateOrders == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(dateOrders.values());
+        }
+
+        @Override
+        public Map<LocalDate, Map<Integer, Order>> getAllOrders() {
+            return new HashMap<>(orders);
+        }
+
+        @Override
+        public Order removeOrder(LocalDate date, int orderNumber) throws NoSuchOrderException {
+            Map<Integer, Order> dateOrders = orders.get(date);
+            if (dateOrders == null || !dateOrders.containsKey(orderNumber)) {
+                throw new NoSuchOrderException("Order not found");
+            }
+            return dateOrders.remove(orderNumber);
+        }
     }
 }

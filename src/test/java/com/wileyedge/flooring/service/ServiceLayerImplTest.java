@@ -72,12 +72,26 @@ public class ServiceLayerImplTest {
 
     @Test
     public void testGetOrder() throws Exception {
-        // Act
-        Order order = service.getOrder(LocalDate.of(2025, 12, 1), 1);
+        // Arrange - First add an order
+        Order order = new Order();
+        order.setOrderNumber(1);
+        order.setCustomerName("Test Customer");
+        order.setState("TX");
+        order.setTaxRate(new BigDecimal("4.45"));
+        order.setProductType("Tile");
+        order.setArea(new BigDecimal("100.00"));
+        order.setCostPerSquareFoot(new BigDecimal("3.50"));
+        order.setLaborCostPerSquareFoot(new BigDecimal("4.15"));
+        order.setOrderDate(LocalDate.of(2025, 12, 1));
+
+        service.addOrder(order);
+
+        // Act - Now retrieve it
+        Order retrieved = service.getOrder(LocalDate.of(2025, 12, 1), 1);
 
         // Assert
-        assertNotNull(order);
-        assertEquals(1, order.getOrderNumber());
+        assertNotNull(retrieved);
+        assertEquals(1, retrieved.getOrderNumber());
     }
 
     @Test(expected = NoSuchOrderException.class)
